@@ -1,0 +1,18 @@
+import 'package:flutter/material.dart';
+import 'package:tcc/screens/principal/components/body.dart';
+
+class PrincipalScreen extends StatefulWidget {
+  const PrincipalScreen({super.key});
+
+  @override
+  State<PrincipalScreen> createState() => _PrincipalScreenState();
+}
+
+class _PrincipalScreenState extends State<PrincipalScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Body(),
+    );
+  }
+}
