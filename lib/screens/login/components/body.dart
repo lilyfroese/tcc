@@ -103,12 +103,22 @@ class _BodyState extends State<Body> {
                 setState(() => _showValidation = true);
 
                 if (_formKey.currentState!.validate()) {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => PrincipalScreen(),
-                  ));
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => PrincipalScreen()),
+                  );
+
+                  /*
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => PrincipalScreen()),
+                    (Route<dynamic> route) => false, // Remove todas as rotas anteriores
+                  );
+                  */
                 }
               },
             ),
+
             AlreadyHaveAnAccountCheck(
               login: true,
               press: () {
@@ -117,6 +127,7 @@ class _BodyState extends State<Body> {
                 ));
               },
             ),
+            
             ForgetYourPassword(
               press: () {
                 Navigator.pushNamed(context, " ");

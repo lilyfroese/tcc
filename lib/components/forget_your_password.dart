@@ -12,7 +12,7 @@ class ForgetYourPassword extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-       GestureDetector(
+      GestureDetector(
           onTap: () {
             Navigator.pushNamed(context, " ");
           },
