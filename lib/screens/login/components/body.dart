@@ -98,6 +98,7 @@ class _BodyState extends State<Body> {
               ),
             ),
             RoundedButton(
+<<<<<<< HEAD
             text: "LOGIN",
             press: () {
               setState(() => _showValidation = true);
@@ -110,6 +111,28 @@ class _BodyState extends State<Body> {
                 }
             },
           ),
+=======
+              text: "LOGIN",
+              press: () {
+                setState(() => _showValidation = true);
+
+                if (_formKey.currentState!.validate()) {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => PrincipalScreen()),
+                  );
+
+                  /*
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => PrincipalScreen()),
+                    (Route<dynamic> route) => false, // Remove todas as rotas anteriores
+                  );
+                  */
+                }
+              },
+            ),
+>>>>>>> 4a5982d194ce58858cbdabbb2d6d2066d70b48d8
 
             AlreadyHaveAnAccountCheck(
               login: true,
@@ -119,6 +142,7 @@ class _BodyState extends State<Body> {
                 ));
               },
             ),
+            
             ForgetYourPassword(
               press: () {
                 Navigator.pushNamed(context, " ");
