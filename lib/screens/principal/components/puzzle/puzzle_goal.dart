@@ -5,65 +5,69 @@ import 'dart:math';
 class PuzzleGoal extends StatelessWidget {
   final int totalPieces; // Quantidade total de peças no quebra-cabeça
   final void Function(int)? onPieceTap; // Callback chamado ao clicar numa peça
+  final double verticalPaddingBottom; // Espaço inferior configurável
 
-  const PuzzleGoal({super.key, required this.totalPieces, this.onPieceTap});
+  const PuzzleGoal({
+    super.key,
+    required this.totalPieces,
+    this.onPieceTap,
+    this.verticalPaddingBottom = 20.0, // valor padrão menor
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Calcula linhas e colunas ideais com base no total de peças
     final dimensions = _calculateGridDimensions(totalPieces);
     final rows = dimensions.item1;
     final columns = dimensions.item2;
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Definição das margens da área
-        const horizontalPadding = 30.0;
-        const verticalPaddingTop = 60.0;
-        const verticalPaddingBottom = 180.0;
+        const horizontalPadding = 20.0;
 
-        // Espaço disponível para o puzzle
-        final maxWidth = constraints.maxWidth - 2 * horizontalPadding;
-        final maxHeight = constraints.maxHeight - verticalPaddingTop - verticalPaddingBottom;
+        // espaço de cima adaptável
+        final verticalPaddingTop = max(10.0, 60.0 - rows * 5);
 
-        // Tamanho máximo de cada peça baseado na tela
-        final maxPieceWidth = maxWidth / columns;
-        final maxPieceHeight = maxHeight / rows;
+        // Área máxima para o puzzle
+        final maxWidthArea = constraints.maxWidth - 2 * horizontalPadding;
+        final maxHeightArea = constraints.maxHeight - verticalPaddingTop - verticalPaddingBottom;
 
-        // Tamanho final da peça (mínimo dos dois)
+        final maxPieceWidth = maxWidthArea / columns;
+        final maxPieceHeight = maxHeightArea / rows;
+
         final pieceSize = min(maxPieceWidth, maxPieceHeight);
 
-        // Tamanho total do quebra-cabeça
         final puzzleWidth = pieceSize * columns;
         final puzzleHeight = pieceSize * rows;
 
         return Padding(
-          padding: EdgeInsets.fromLTRB(horizontalPadding, verticalPaddingTop, horizontalPadding, verticalPaddingBottom),
+          padding: EdgeInsets.fromLTRB(
+            horizontalPadding,
+            verticalPaddingTop,
+            horizontalPadding,
+            verticalPaddingBottom,
+          ),
           child: Align(
-            alignment: Alignment.topCenter,
+            alignment: Alignment.topCenter, // fixa no topo do retângulo
             child: SizedBox(
               width: puzzleWidth,
               height: puzzleHeight,
               child: Stack(
                 children: List.generate(totalPieces, (index) {
-                  // Cálculo de linha e coluna para a peça atual
                   final row = index ~/ columns;
                   final column = index % columns;
 
-                  // Define os tipos de encaixe das bordas
                   final top = row == 0 ? SideType.flat : (row % 2 == 0 ? SideType.outward : SideType.inward);
                   final bottom = row == rows - 1 ? SideType.flat : (row % 2 == 0 ? SideType.inward : SideType.outward);
                   final left = column == 0 ? SideType.flat : (column % 2 == 0 ? SideType.outward : SideType.inward);
                   final right = column == columns - 1 ? SideType.flat : (column % 2 == 0 ? SideType.inward : SideType.outward);
 
-                  // Posiciona a peça na Stack
                   return Positioned(
                     left: column * pieceSize,
                     top: row * pieceSize,
                     width: pieceSize,
                     height: pieceSize,
                     child: GestureDetector(
-                      onTap: () => onPieceTap?.call(index), // Envia o índice ao clicar
+                      onTap: () => onPieceTap?.call(index),
                       child: PuzzlePieceWidget(
                         index: index,
                         row: row,
@@ -86,7 +90,6 @@ class PuzzleGoal extends StatelessWidget {
     );
   }
 
-  /// Retorna um par de (linhas, colunas) baseado na quantidade de peças
   Tuple2<int, int> _calculateGridDimensions(int count) {
     switch (count) {
       case 2: return Tuple2(2, 1);
@@ -108,14 +111,12 @@ class PuzzleGoal extends StatelessWidget {
   }
 }
 
-/// Classe utilitária para retornar tuplas com dois valores
 class Tuple2<T1, T2> {
   final T1 item1;
   final T2 item2;
   Tuple2(this.item1, this.item2);
 }
 
-/// Widget que representa uma única peça do quebra-cabeça
 class PuzzlePieceWidget extends StatelessWidget {
   final int index;
   final int row, column;
@@ -137,7 +138,7 @@ class PuzzlePieceWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = _getRandomColor(index); // Cor aleatória (consistente pelo índice)
+    final color = _getRandomColor(index);
 
     return CustomPaint(
       painter: PuzzlePiecePainter(
@@ -147,11 +148,10 @@ class PuzzlePieceWidget extends StatelessWidget {
         left: left,
         right: right,
       ),
-      child: Container(), // Ocupa a área da peça
+      child: Container(),
     );
   }
 
-  /// Gera uma cor pseudoaleatória com base no índice da peça
   Color _getRandomColor(int seed) {
     final random = Random(seed);
     return Color.fromARGB(
@@ -163,13 +163,9 @@ class PuzzlePieceWidget extends StatelessWidget {
   }
 }
 
-/// Tipos de encaixe das bordas da peça
 enum SideType { flat, inward, outward }
-
-/// Enum para identificar lados
 enum Side { top, bottom, left, right }
 
-/// Pintor responsável por desenhar a peça visualmente com seus encaixes
 class PuzzlePiecePainter extends CustomPainter {
   final Color color;
   final SideType top, bottom, left, right;
@@ -184,12 +180,11 @@ class PuzzlePiecePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = color;
     final path = Path();
 
     final w = size.width;
     final h = size.height;
-    final knobSize = min(w, h) * 0.2; // Tamanho da “aba” de encaixe
+    final knobSize = min(w, h) * 0.2;
 
     path.moveTo(0, 0);
     _drawSide(path, w, 0, Side.top, top, knobSize);
@@ -198,18 +193,27 @@ class PuzzlePiecePainter extends CustomPainter {
     _drawSide(path, h, 0, Side.left, left, knobSize);
     path.close();
 
-    canvas.drawPath(path, paint); // Desenha o caminho final da peça
+    final paint = Paint()
+      ..shader = LinearGradient(
+        colors: [_darken(color, 0.3), _lighten(color, 0.1)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+
+    canvas.drawPath(path, paint);
   }
 
-  /// Desenha uma borda com ou sem aba, dependendo do tipo
-  void _drawSide(
-    Path path, 
-    double length, 
-    double offset, 
-    Side side, 
-    SideType type, 
-    double knobSize
-    ) {
+  Color _darken(Color color, [double amount = .2]) {
+    final hsl = HSLColor.fromColor(color);
+    return hsl.withLightness((hsl.lightness - amount).clamp(0.0, 1.0)).toColor();
+  }
+
+  Color _lighten(Color color, [double amount = .2]) {
+    final hsl = HSLColor.fromColor(color);
+    return hsl.withLightness((hsl.lightness + amount).clamp(0.0, 1.0)).toColor();
+  }
+
+  void _drawSide(Path path, double length, double offset, Side side, SideType type, double knobSize) {
     double third = length / 3;
 
     switch (side) {
@@ -236,15 +240,14 @@ class PuzzlePiecePainter extends CustomPainter {
     }
   }
 
-  /// Desenha o formato curvado da aba (inward ou outward)
   void _drawKnob(Path path, Offset from, Offset to, SideType type, bool horizontal, {bool reverse = false}) {
     if (type == SideType.flat) {
-      path.lineTo(to.dx, to.dy); // Linha reta
+      path.lineTo(to.dx, to.dy);
       return;
     }
 
     final mid = Offset((from.dx + to.dx) / 2, (from.dy + to.dy) / 2);
-    final knobRadius = (horizontal ? to.dx - from.dx : to.dy - from.dy) / 1.5; // Raio da curva
+    final knobRadius = (horizontal ? to.dx - from.dx : to.dy - from.dy) / 1.5;
     final knobDepth = (type == SideType.outward ? 1 : -1) * knobRadius;
 
     if (horizontal) {

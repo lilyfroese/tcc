@@ -4,11 +4,15 @@ class RoundedButton extends StatelessWidget {
   final String text;
   final Function press;
   final Color textColor;
+  final List<Color>? gradientColors;
+
   const RoundedButton({
     super.key, 
     required this.text, 
     required this.press, 
     this.textColor = Colors.white54,
+    this.gradientColors,
+
   });
   
   @override
@@ -33,10 +37,11 @@ class RoundedButton extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.yellow[800]!, Colors.yellow[300]!],
+              colors: gradientColors ?? [Colors.yellow[800]!, Colors.yellow[300]!],
             ),
             borderRadius: BorderRadius.circular(30),
           ),
+
           child: Container(
             alignment: Alignment.center,
             child: Text(

@@ -98,17 +98,19 @@ class _BodyState extends State<Body> {
               ),
             ),
             RoundedButton(
-              text: "LOGIN",
-              press: () {
-                setState(() => _showValidation = true);
-
-                if (_formKey.currentState!.validate()) {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => PrincipalScreen(),
-                  ));
+            text: "LOGIN",
+            press: () {
+              setState(() => _showValidation = true);
+              if (_formKey.currentState!.validate()) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => PrincipalScreen()),
+                    (Route<dynamic> route) => false,
+                  );
                 }
-              },
-            ),
+            },
+          ),
+
             AlreadyHaveAnAccountCheck(
               login: true,
               press: () {

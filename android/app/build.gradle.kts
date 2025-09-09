@@ -6,6 +6,9 @@ plugins {
 }
 
 android {
+    defaultConfig {
+        minSdkVersion(21)
+    }
     namespace = "com.example.tcc"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion

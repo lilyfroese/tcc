@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/common/errors/metas/cadastro/sign_up_goal.dart';
 import 'package:tcc/components/bottom_navegation_bar.dart';
 import 'package:tcc/components/custom_drawer.dart';
+import 'package:tcc/components/rounded_button.dart';
 import 'package:tcc/screens/principal/components/puzzle/puzzle_goal.dart';
 
 class Body extends StatefulWidget {
@@ -39,11 +41,23 @@ class _BodyState extends State<Body> {
                   children: [
                     const SizedBox(height: 250), // Espaço antes do primeiro grupo
                     PuzzleGoal(
-                      totalPieces: 4, // Número de peças do quebra-cabeça
-                      onPieceTap: (index) {
-                        // Ação ao tocar em uma peça
-                        print('Peça $index tocada');
+                      totalPieces: 4,
+                      verticalPaddingBottom: 20, // botão fica quase colado
+                      onPieceTap: (index) { 
+                        print('Peça $index tocada'); 
                       },
+                    ),
+
+                    const SizedBox(height: 10), // Espaço entre puzzle e botão
+                    RoundedButton(
+                      text: 'Adicionar Metas',
+                      press: () {
+                        Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => SignUpGoalScreen(),
+                        ));
+                       },
+                      textColor: Colors.white,
+                      gradientColors: [Colors.grey.shade300, Colors.grey.shade300], // cinza claro
                     ),
                   ],
                 ),

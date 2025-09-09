@@ -106,11 +106,12 @@ class _BodyState extends State<Body> {
               text: "SIGN UP",
               press: () {
                 setState(() => _showValidation = true);
-
                 if (_formKey.currentState!.validate()) {
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => PrincipalScreen(),
-                  ));
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => PrincipalScreen()),
+                    (Route<dynamic> route) => false,
+                  );
                 }
               },
             ),

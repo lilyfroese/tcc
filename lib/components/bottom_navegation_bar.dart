@@ -4,6 +4,7 @@ import 'package:tcc/components/avatar_circle.dart';
 import 'package:tcc/components/curved_navbar_clipper.dart';
 import 'package:tcc/screens/desabafo/desabafo.dart';
 import 'package:tcc/screens/postit/post_it_screen.dart';
+import 'package:tcc/screens/servidor/servidor.dart';
 import 'package:tcc/screens/widgets/widgets_screen.dart';
 
 class ButtomNavigationBar extends StatelessWidget {
@@ -63,7 +64,11 @@ class ButtomNavigationBar extends StatelessWidget {
                         size: 24, 
                         color: Colors.white70
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => const Servidor(),
+                        ));
+                      },
                       tooltip: 'Servidor',
                     ),
 
