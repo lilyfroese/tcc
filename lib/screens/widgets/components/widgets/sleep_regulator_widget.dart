@@ -68,93 +68,96 @@ class _SleepRegulatorWidgetState extends State<SleepRegulatorWidget>
     final sleepStr = formatTime(widget.sleepTime);
     final wakeStr = formatTime(widget.wakeTime);
 
-    return Container(
-      width: (screenWidth / 2) - 24,
-      height: 180,
-      margin: const EdgeInsets.symmetric(vertical: 12),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFC4B2D7), // Roxo claro da imagem
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
-        children: [
-          // Título e ícone
-          Positioned(
-            top: 6,
-            left: 0,
-            child: Row(
-              children: const [
-                Icon(Icons.bedtime_rounded, color: Colors.white, size: 22),
-                SizedBox(width: 6),
-                Text(
-                  'Sono',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        width: (screenWidth / 2) - 24,
+        height: 180,
+        margin: const EdgeInsets.symmetric(vertical: 12),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        decoration: BoxDecoration(
+          color: const Color(0xFFC4B2D7), // Roxo claro da imagem
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Stack(
+          children: [
+            // Título e ícone
+            Positioned(
+              top: 6,
+              left: 0,
+              child: Row(
+                children: const [
+                  Icon(Icons.bedtime_rounded, color: Colors.white, size: 22),
+                  SizedBox(width: 6),
+                  Text(
+                    'Sono',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
-
-          // Arco + lua + avaliação central
-          Align(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  width: 100,
-                  height: 90,
-                  child: AnimatedBuilder(
-                    animation: _fillAnimation,
-                    builder: (context, child) {
-                      return CustomPaint(
-                        painter:
-                            SleepArcPainter(percent: _fillAnimation.value),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  quality,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              ],
-            ),
-          ),
-
-          // Horários nas pontas do arco
-          Positioned(
-            bottom: 12,
-            left: 4,
-            child: Text(
-              sleepStr,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 11,
+                ],
               ),
             ),
-          ),
-          Positioned(
-            bottom: 12,
-            right: 4,
-            child: Text(
-              wakeStr,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 11,
+
+            // Arco + lua + avaliação central
+            Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    height: 90,
+                    child: AnimatedBuilder(
+                      animation: _fillAnimation,
+                      builder: (context, child) {
+                        return CustomPaint(
+                          painter:
+                              SleepArcPainter(percent: _fillAnimation.value),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    quality,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                ],
               ),
             ),
-          ),
-        ],
+
+            // Horários nas pontas do arco
+            Positioned(
+              bottom: 12,
+              left: 4,
+              child: Text(
+                sleepStr,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 12,
+              right: 4,
+              child: Text(
+                wakeStr,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
