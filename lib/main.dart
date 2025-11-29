@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tcc/core/api/api.dart';
 import 'package:tcc/screens/welcome/welcome_screen.dart';
 
 
 void main() {
+  Api.init();
   runApp(const MyApp());
 }
 

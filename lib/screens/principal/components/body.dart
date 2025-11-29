@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tcc/common/errors/metas/cadastro/sign_up_goal.dart';
+import 'package:tcc/screens/metas/cadastro/sign_up_goal.dart';
 import 'package:tcc/components/bottom_navegation_bar.dart';
 import 'package:tcc/components/custom_drawer.dart';
 import 'package:tcc/components/rounded_button.dart';

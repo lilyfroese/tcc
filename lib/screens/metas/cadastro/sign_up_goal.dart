@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
+import 'dart:ui';
+
+import 'package:tcc/service/meta.service.dart';
+
 
 class SignUpGoalScreen extends StatefulWidget {
   const SignUpGoalScreen({super.key});
@@ -17,6 +20,7 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
   String categoriaSelecionada = 'Pessoal';
   Color corSelecionada = Colors.transparent;
   bool notificar = true;
+  IconData? iconeSelecionado;
 
   final List<Color> cores = [
     Colors.white,
@@ -26,7 +30,20 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
     const Color(0xFFAEC8FF),
     const Color(0xFFB9E5C8),
     const Color(0xFF6BA6A6),
-  ];
+  ]; 
+
+  final List<IconData> icones = [
+  Icons.bubble_chart,   
+  Icons.nightlight_round, 
+  Icons.local_florist,  
+  Icons.menu_book,      
+  Icons.fitness_center,
+  Icons.star,           
+  Icons.favorite,       
+];
+
+
+  DateTime? dataSelecionada;
 
   Future<void> selecionarData() async {
     DateTime? selecionada = await showDatePicker(
@@ -35,8 +52,12 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
       firstDate: DateTime(2024),
       lastDate: DateTime(2100),
     );
+
     if (selecionada != null) {
-    //  prazoController.text = DateFormat('dd/MM/yyyy').format(selecionada);
+      dataSelecionada = selecionada;
+      prazoController.text =
+          "${selecionada.day}/${selecionada.month}/${selecionada.year}";
+      setState(() {});
     }
   }
 
@@ -60,12 +81,14 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
         ),
         centerTitle: true,
       ),
+
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+
               const Text('Título da Meta',
                   style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 6),
@@ -73,6 +96,7 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
                 controller: tituloController,
                 decoration: _inputDecoration('Título da Meta'),
               ),
+
               const SizedBox(height: 16),
               const Text('Categoria',
                   style: TextStyle(fontWeight: FontWeight.w600)),
@@ -85,7 +109,9 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
                 decoration: _inputDecoration('Categoria'),
                 onChanged: (v) => setState(() => categoriaSelecionada = v!),
               ),
+
               const SizedBox(height: 16),
+
               Row(
                 children: [
                   Expanded(
@@ -103,7 +129,9 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
                       ],
                     ),
                   ),
+
                   const SizedBox(width: 16),
+
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +150,9 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
                   ),
                 ],
               ),
+
               const SizedBox(height: 16),
+
               const Text('Descrição',
                   style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 6),
@@ -131,9 +161,12 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
                 decoration: _inputDecoration('Descrição'),
                 maxLines: 3,
               ),
+
               const SizedBox(height: 16),
+
               const Text('Cor', style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 6),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: cores
@@ -158,7 +191,40 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
                     )
                     .toList(),
               ),
+
               const SizedBox(height: 16),
+              const Text('Ícone', style: TextStyle(fontWeight: FontWeight.w600)),
+              const SizedBox(height: 6),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: icones.map((iconData) {
+                  return GestureDetector(
+                    onTap: () => setState(() => iconeSelecionado = iconData),
+                    child: Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,  // fundo cinza claro
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: iconeSelecionado == iconData ? Colors.blue : Colors.grey.shade300,
+                          width: 2,
+                        ),
+                      ),
+                      child: Icon(
+                        iconData,
+                        size: 22,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+
+
+              const SizedBox(height: 16),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -172,13 +238,43 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
                   ),
                 ],
               ),
+
               const SizedBox(height: 20),
+
               SizedBox(
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () {
-                    // salvar meta aqui
+                  onPressed: () async {
+                    final metaService = MetaService();
+
+                    String type = "optional";
+                    if (categoriaSelecionada == "Saúde") type = "hydration";
+
+                    final data = {
+                      "title": tituloController.text,
+                      "description": descricaoController.text,
+                      "category": categoriaSelecionada,         
+                      "goalValue": int.tryParse(metaController.text),
+                      "deadline": dataSelecionada?.toIso8601String(),
+                      "color": '#${corSelecionada.value.toRadixString(16).substring(2)}',  
+                      "icon": "star",                            
+                      "notify": notificar,
+                    };
+
+
+                    final res = await metaService.criarMeta(data);
+
+                    if (res.ok) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Meta criada com sucesso!")),
+                      );
+                      Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Erro: ${res.data}")),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF447BFF),
@@ -186,13 +282,17 @@ class _SignUpGoalScreenState extends State<SignUpGoalScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+
                   child: const Text(
                     'Salvar Meta',
                     style: TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
+
             ],
           ),
         ),

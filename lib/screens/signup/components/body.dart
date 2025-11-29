@@ -4,6 +4,7 @@ import 'package:tcc/components/rounded_input_field.dart';
 import 'package:tcc/components/rounded_password_field.dart';
 import 'package:tcc/screens/principal/principal.dart';
 import 'package:tcc/screens/signup/components/background.dart';
+import 'package:tcc/service/auth_service.dart';
 
 class Body extends StatefulWidget {
   final Widget child;
@@ -104,14 +105,33 @@ class _BodyState extends State<Body> {
             ),
             RoundedButton(
               text: "SIGN UP",
-              press: () {
+              press: () async {
                 setState(() => _showValidation = true);
+
                 if (_formKey.currentState!.validate()) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => PrincipalScreen()),
-                    (Route<dynamic> route) => false,
+                  final auth = AuthService();
+
+                  final sucesso = await auth.cadastrar(
+                    nome: _nomeController.text,
+                    email: _emailController.text,
+                    senha: _senhaController.text,
+                    grupo: _grupoController.text,
                   );
+
+                  if (sucesso) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Usuário criado com sucesso!")),
+                    );
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PrincipalScreen()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Erro ao cadastrar usuário.")),
+                    );
+                  }
                 }
               },
             ),

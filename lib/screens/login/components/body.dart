@@ -7,6 +7,7 @@ import 'package:tcc/components/rounded_password_field.dart';
 import 'package:tcc/screens/login/components/background.dart';
 import 'package:tcc/screens/principal/principal.dart';
 import 'package:tcc/screens/signup/signup_screen.dart';
+import 'package:tcc/service/auth_service.dart';
 
 class Body extends StatefulWidget {
   const Body({super.key});
@@ -99,14 +100,28 @@ class _BodyState extends State<Body> {
             ),
             RoundedButton(
               text: "LOGIN",
-              press: () {
+              press: () async {
                 setState(() => _showValidation = true);
 
                 if (_formKey.currentState!.validate()) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const PrincipalScreen()),
+                  final auth = AuthService();
+
+                  final sucesso = await auth.login(
+                    nome: _nomeController.text,
+                    email: _emailController.text,
+                    senha: _senhaController.text,
                   );
+
+                  if (sucesso) {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PrincipalScreen()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Login inválido")),
+                    );
+                  }
                 }
               },
             ),
